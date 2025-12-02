@@ -5,7 +5,7 @@
   <title>Smart Parking Status · Signal Ninjas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <style>
+<style>
     :root {
       --bg: #020617;
       --accent: #38bdf8;
@@ -16,11 +16,7 @@
       --text-muted: #9ca3af;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       min-height: 100vh;
@@ -30,13 +26,14 @@
       padding: 24px 18px;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text-main);
+      background: #020617; /* Fallback */
       background:
         radial-gradient(circle at 0% 0%, #1d4ed8 0, transparent 45%),
         radial-gradient(circle at 100% 100%, #0f766e 0, transparent 45%),
         radial-gradient(circle at 20% 80%, #a855f7 0, transparent 40%),
         radial-gradient(circle at 80% 20%, #06b6d4 0, transparent 40%),
         #020617;
-      overflow: hidden;
+      overflow-x: hidden; /* 防止手机横向滚动 */
     }
 
     /* floating blobs */
@@ -52,26 +49,9 @@
       pointer-events: none;
       animation: float 18s ease-in-out infinite alternate;
     }
-
-    .blob.b1 {
-      background: #22c55e;
-      top: -80px;
-      left: -120px;
-    }
-
-    .blob.b2 {
-      background: #3b82f6;
-      bottom: -110px;
-      right: -120px;
-      animation-delay: -6s;
-    }
-
-    .blob.b3 {
-      background: #a855f7;
-      top: 40%;
-      left: 70%;
-      animation-delay: -12s;
-    }
+    .blob.b1 { background: #22c55e; top: -80px; left: -120px; }
+    .blob.b2 { background: #3b82f6; bottom: -110px; right: -120px; animation-delay: -6s; }
+    .blob.b3 { background: #a855f7; top: 40%; left: 70%; animation-delay: -12s; }
 
     @keyframes float {
       0%   { transform: translate3d(0, 0, 0) scale(1); }
@@ -79,10 +59,7 @@
       100% { transform: translate3d(-16px, 18px, 0) scale(1.02); }
     }
 
-    .shell {
-      width: 100%;
-      max-width: 720px;
-    }
+    .shell { width: 100%; max-width: 720px; }
 
     .card {
       position: relative;
@@ -90,207 +67,110 @@
       border-radius: 22px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      box-shadow:
-        0 24px 60px rgba(15, 23, 42, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.8);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.9), 0 0 0 1px rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       overflow: hidden;
     }
 
-    @media (min-width: 640px) {
-      .card { padding: 34px 34px 30px; }
-    }
-
     .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 0 0,
-                  rgba(255,255,255,0.08), transparent 60%);
-      opacity: 0.7;
-      pointer-events: none;
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.08), transparent 60%);
+      opacity: 0.7; pointer-events: none;
     }
 
-    .card-inner {
-      position: relative;
-      z-index: 1;
-    }
+    .card-inner { position: relative; z-index: 1; }
 
     .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent-soft);
-      background: rgba(15,23,42,0.9);
-      border: 1px solid rgba(148,163,184,0.6);
-      margin-bottom: 18px;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 11px; border-radius: 999px; font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent-soft); background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.6); margin-bottom: 18px;
     }
-
     .pill-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 10px rgba(56,189,248,0.95);
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--accent); box-shadow: 0 0 10px rgba(56,189,248,0.95);
     }
 
     .title {
-      font-size: 28px;
-      line-height: 1.4;
-      margin-bottom: 4px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #f9fafb;
-    }
-
-    @media (min-width: 640px) {
-      .title { font-size: 30px; }
+      font-size: 28px; line-height: 1.3; margin-bottom: 12px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: #f9fafb;
     }
 
     .typed-wrapper {
-      display: inline-flex;
-      align-items: center;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(15,23,42,0.93);
-      border: 1px solid rgba(148,163,184,0.7);
+      display: inline-flex; align-items: center;
+      padding: 10px 16px; border-radius: 999px;
+      background: rgba(15,23,42,0.93); border: 1px solid rgba(148,163,184,0.7);
       box-shadow: 0 16px 40px rgba(15,23,42,0.85);
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 15px;
-      margin-top: 10px;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 15px; margin-top: 6px; max-width: 100%;
     }
 
     .typed-text {
-      min-height: 1.3em;
-      white-space: nowrap;
+      min-height: 1.3em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .cursor {
-      width: 10px;
-      height: 1.1em;
-      margin-left: 4px;
-      border-radius: 2px;
-      background: var(--accent);
-      animation: blink 0.7s steps(1) infinite;
+      width: 10px; height: 1.1em; margin-left: 4px; border-radius: 2px;
+      background: var(--accent); animation: blink 0.7s steps(1) infinite; flex-shrink: 0;
     }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%,100% { opacity: 0; } }
 
-    @keyframes blink {
-      0%, 49% { opacity: 1; }
-      50%,100% { opacity: 0; }
-    }
-
-    /* content that appears after typing */
     .extra {
-      opacity: 0;
-      transform: translateY(8px);
+      opacity: 0; transform: translateY(8px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
+    .extra.visible { opacity: 1; transform: translateY(0); }
 
-    .extra.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .subtitle {
-      margin-top: 22px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .subtitle strong {
-      color: var(--accent-soft);
-      font-weight: 500;
-    }
+    .subtitle { margin-top: 22px; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .subtitle strong { color: var(--accent-soft); font-weight: 500; }
 
     .meta {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--text-muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 16px;
+      margin-top: 16px; font-size: 12px; color: var(--text-muted);
+      display: flex; flex-wrap: wrap; gap: 8px 16px;
     }
+    .meta span { display: inline-flex; align-items: center; gap: 6px; }
+    .meta span::before { content: "●"; font-size: 10px; color: rgba(148,163,184,0.9); }
 
-    .meta span {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .meta span::before {
-      content: "●";
-      font-size: 10px;
-      color: rgba(148,163,184,0.9);
-    }
-
-    .enter-area {
-      margin-top: 30px;
-    }
-
+    .enter-area { margin-top: 30px; }
     .enter-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 16px;
-      color: var(--accent-soft);
-      cursor: pointer;
-      position: relative;
-      padding-bottom: 3px;
-      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 10px; font-size: 16px;
+      color: var(--accent-soft); cursor: pointer; position: relative;
+      padding-bottom: 3px; text-decoration: none;
     }
-
     .enter-link::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 1px;
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
       background: linear-gradient(90deg, transparent, var(--accent-soft), transparent);
-      transform-origin: center;
-      transform: scaleX(0.5);
-      opacity: 0.75;
+      transform-origin: center; transform: scaleX(0.5); opacity: 0.75;
       transition: transform 0.18s ease, opacity 0.18s ease;
     }
+    .enter-link span.icon { font-size: 18px; transform: translateX(0); transition: transform 0.18s ease; }
+    .enter-link:hover::after { transform: scaleX(1); opacity: 1; }
+    .enter-link:hover span.icon { transform: translateX(3px); }
 
-    .enter-link span.icon {
-      font-size: 18px;
-      transform: translateX(0);
-      transition: transform 0.18s ease;
-    }
+    .hint { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
 
-    .enter-link:hover::after {
-      transform: scaleX(1);
-      opacity: 1;
-    }
-
-    .enter-link:hover span.icon {
-      transform: translateX(3px);
-    }
-
-    .hint {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    @media (max-width: 480px) {
+    /* ========== 手机端适配 (Mobile) ========== */
+    @media (max-width: 600px) {
+      body { padding: 16px; }
+      .blob { width: 260px; height: 260px; opacity: 0.25; } /* 缩小背景球 */
+      .card { padding: 24px 20px; } /* 减少卡片内边距 */
+      
+      .pill { font-size: 10px; margin-bottom: 12px; }
+      
+      .title { font-size: 22px; line-height: 1.3; } /* 缩小标题 */
+      
       .typed-wrapper {
-        width: 100%;
-        justify-content: center;
+        font-size: 12px; padding: 8px 12px;
+        white-space: normal; /* 允许换行 */
       }
-      .typed-text {
-        font-size: 14px;
-      }
-      .title {
-        letter-spacing: 0.15em;
-      }
+      .typed-text { white-space: normal; word-break: break-word; } /* 文字长了自动换行 */
+      
+      .meta { flex-direction: column; gap: 6px; align-items: flex-start; } /* 信息改为垂直排列 */
+      .meta span::before { display: none; } /* 手机上去掉圆点，显得更干净 */
+      
+      .enter-link { font-size: 15px; }
     }
   </style>
 </head>
@@ -372,4 +252,5 @@
   </script>
 </body>
 </html>
+
 
