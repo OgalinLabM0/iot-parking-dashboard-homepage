@@ -7,129 +7,106 @@
 
 <style>
     :root {
-      --bg: #020617; --accent: #38bdf8; --accent-soft: #7dd3fc; --text-main: #f8fafc; --text-muted: #94a3b8;
+      --bg: #050b14; --text: #f1f5f9; --accent: #0ea5e9; --accent-glow: rgba(14, 165, 233, 0.4);
+      --card-bg: rgba(15, 23, 42, 0.7); --border: rgba(56, 189, 248, 0.2);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #020617; overflow-x: hidden; position: relative;
+      padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: var(--bg); color: var(--text);
+      /* 背景网格纹理 - 增加科技感 */
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      position: relative; overflow: hidden;
     }
 
-    /* 背景动态光效 - 更有质感 */
-    .glow-bg {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
-      background: 
-        radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.15), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+    /* 顶部光晕 */
+    body::before {
+      content: ""; position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 300px; background: var(--accent); filter: blur(140px); opacity: 0.15; pointer-events: none;
     }
-    .blob {
-      position: fixed; border-radius: 50%; filter: blur(60px); opacity: 0.4; z-index: -1;
-      animation: float 10s infinite alternate ease-in-out;
-    }
-    .blob.b1 { width: 300px; height: 300px; background: #3b82f6; top: -10%; left: -10%; }
-    .blob.b2 { width: 400px; height: 400px; background: #0f766e; bottom: -10%; right: -10%; animation-delay: -5s; }
 
-    @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 20px); } }
-
-    .shell { width: 100%; max-width: 680px; perspective: 1000px; }
+    .shell { width: 100%; max-width: 640px; position: relative; z-index: 10; }
 
     .card {
-      position: relative; padding: 40px; border-radius: 24px;
-      background: rgba(15, 23, 42, 0.6); /* 更通透的深色 */
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      overflow: hidden;
-    }
-    
-    /* 顶部高光条，增加立体感 */
-    .card::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      padding: 48px; border-radius: 24px; text-align: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 0 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
     }
 
-    .card-inner { position: relative; z-index: 10; }
-
-    /* 标签 Pill */
+    /* 顶部标签 */
     .pill {
-      display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
-      border-radius: 30px; font-size: 11px; letter-spacing: 0.15em; font-weight: 600;
-      color: var(--accent); background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.2); margin-bottom: 24px; text-transform: uppercase;
-      box-shadow: 0 0 10px rgba(56,189,248,0.1);
+      display: inline-block; padding: 6px 14px; margin-bottom: 24px;
+      border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.2);
+      box-shadow: 0 0 15px var(--accent-glow);
     }
-    .pill-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
 
-    /* 大标题 */
     .title {
-      font-size: 36px; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.02em;
-      color: #fff; line-height: 1.1;
-      background: linear-gradient(to bottom right, #fff, #94a3b8);
+      font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 24px;
+      background: linear-gradient(to bottom, #ffffff, #94a3b8);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1.1;
     }
 
-    /* 打字机区域 */
+    /* 打字机框 - 像代码编辑器 */
     .typed-wrapper {
-      display: inline-block; padding: 12px 18px;
-      border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
-      font-family: "JetBrains Mono", monospace; font-size: 15px; color: var(--accent-soft);
-      line-height: 1.6; max-width: 100%;
+      background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1);
+      padding: 16px; border-radius: 12px; margin: 0 auto; display: inline-block;
+      font-family: "JetBrains Mono", monospace; font-size: 14px; color: #bae6fd;
+      max-width: 100%;
     }
-    .typed-text { white-space: pre-wrap; } /* 允许换行 */
+    .typed-text { white-space: pre-wrap; word-break: break-word; } /* 允许换行 */
     .cursor {
-      display: inline-block; width: 8px; height: 1.2em; background: var(--accent); 
-      margin-left: 4px; vertical-align: bottom; animation: blink 1s step-end infinite;
+      display: inline-block; width: 8px; height: 1em; background: var(--accent);
+      vertical-align: text-bottom; animation: blink 1s step-end infinite;
     }
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* 渐显内容 */
-    .extra { opacity: 0; transform: translateY(15px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    /* 渐显区域 */
+    .extra { opacity: 0; transform: translateY(20px); transition: all 1s ease; }
     .extra.visible { opacity: 1; transform: translateY(0); }
 
-    .subtitle { margin-top: 24px; font-size: 15px; line-height: 1.6; color: var(--text-muted); }
-    .subtitle strong { color: #f1f5f9; font-weight: 500; }
-
-    .meta { margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; flex-wrap: wrap; gap: 15px; font-size: 13px; color: rgba(255,255,255,0.5); }
-    .meta-item { display: flex; align-items: center; gap: 6px; }
-    .meta-icon { opacity: 0.7; }
-
-    /* 入口按钮 */
-    .enter-link {
-      display: inline-flex; margin-top: 32px; align-items: center; gap: 10px;
-      padding: 12px 24px; border-radius: 12px; font-size: 16px; font-weight: 600;
-      color: #020617; background: var(--accent); text-decoration: none; cursor: pointer;
-      transition: all 0.2s; box-shadow: 0 0 20px rgba(56,189,248,0.4);
+    .subtitle { margin-top: 32px; font-size: 15px; color: #94a3b8; line-height: 1.6; max-width: 80%; margin-left: auto; margin-right: auto; }
+    
+    .meta {
+      margin-top: 32px; display: flex; justify-content: center; gap: 20px; 
+      font-size: 12px; color: #64748b; flex-wrap: wrap;
     }
-    .enter-link:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(56,189,248,0.5); background: #7dd3fc; }
+    .meta span { display: flex; align-items: center; gap: 6px; }
+    .meta span::before { content: ""; width: 4px; height: 4px; background: #475569; border-radius: 50%; }
 
-    /* =========================================
-       📱 手机端适配 (Mobile)
-       ========================================= */
+    /* 按钮 */
+    .enter-link {
+      display: inline-flex; align-items: center; gap: 10px; margin-top: 40px;
+      padding: 14px 32px; font-size: 16px; font-weight: 600;
+      color: #0f172a; background: var(--accent); border-radius: 12px;
+      text-decoration: none; transition: all 0.2s;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .enter-link:hover { transform: translateY(-2px); background: #38bdf8; box-shadow: 0 0 30px var(--accent-glow); }
+
+    /* ========== 手机端适配 ========== */
     @media (max-width: 600px) {
-      body { padding: 12px; align-items: flex-start; } /* 靠上对齐防止切断 */
-      .card { padding: 24px 20px; margin-top: 20px; }
+      body { padding: 12px; align-items: flex-start; } /* 顶对齐 */
+      .card { padding: 32px 20px; margin-top: 20px; }
       
-      .pill { font-size: 10px; padding: 4px 10px; margin-bottom: 16px; }
+      .pill { font-size: 10px; margin-bottom: 20px; }
+      .title { font-size: 28px; margin-bottom: 20px; }
       
-      /* 标题变小 */
-      .title { font-size: 26px; margin-bottom: 16px; }
+      .typed-wrapper { font-size: 12px; padding: 12px; width: 100%; text-align: left; }
+      .cursor { height: 14px; }
       
-      /* 打字机区域适配 */
-      .typed-wrapper { font-size: 13px; padding: 10px; width: 100%; }
-      .cursor { height: 1em; width: 6px; } /* 光标变小 */
+      .subtitle { font-size: 13px; max-width: 100%; }
+      .meta { flex-direction: column; gap: 8px; align-items: center; }
+      .meta span::before { display: none; }
       
-      .subtitle { font-size: 13px; margin-top: 20px; }
-      
-      /* Meta信息垂直排列 */
-      .meta { flex-direction: column; gap: 8px; align-items: flex-start; }
-      
-      /* 按钮全宽 */
-      .enter-link { width: 100%; justify-content: center; margin-top: 24px; padding: 14px; }
-      
-      /* 背景球变淡 */
-      .blob { opacity: 0.2; }
+      .enter-link { width: 100%; justify-content: center; padding: 16px; }
     }
   </style>
 </head>
@@ -211,6 +188,7 @@
   </script>
 </body>
 </html>
+
 
 
 
