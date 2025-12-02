@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Parking Status · Signal Ninjas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg: #020617;
+      --accent: #38bdf8;
+      --accent-soft: #7dd3fc;
+      --card-bg: rgba(15, 23, 42, 0.82);
+      --card-border: rgba(148, 163, 184, 0.55);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 18px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 0% 0%, #1d4ed8 0, transparent 45%),
+        radial-gradient(circle at 100% 100%, #0f766e 0, transparent 45%),
+        radial-gradient(circle at 20% 80%, #a855f7 0, transparent 40%),
+        radial-gradient(circle at 80% 20%, #06b6d4 0, transparent 40%),
+        #020617;
+      overflow: hidden;
+    }
+
+    /* floating blobs */
+    .blob {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.35;
+      z-index: -1;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      animation: float 18s ease-in-out infinite alternate;
+    }
+
+    .blob.b1 {
+      background: #22c55e;
+      top: -80px;
+      left: -120px;
+    }
+
+    .blob.b2 {
+      background: #3b82f6;
+      bottom: -110px;
+      right: -120px;
+      animation-delay: -6s;
+    }
+
+    .blob.b3 {
+      background: #a855f7;
+      top: 40%;
+      left: 70%;
+      animation-delay: -12s;
+    }
+
+    @keyframes float {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      50%  { transform: translate3d(20px, -14px, 0) scale(1.05); }
+      100% { transform: translate3d(-16px, 18px, 0) scale(1.02); }
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .card {
+      position: relative;
+      padding: 32px 26px 26px;
+      border-radius: 22px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      overflow: hidden;
+    }
+
+    @media (min-width: 640px) {
+      .card { padding: 34px 34px 30px; }
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0,
+                  rgba(255,255,255,0.08), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.6);
+      margin-bottom: 18px;
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(56,189,248,0.95);
+    }
+
+    .title {
+      font-size: 28px;
+      line-height: 1.4;
+      margin-bottom: 4px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #f9fafb;
+    }
+
+    @media (min-width: 640px) {
+      .title { font-size: 30px; }
+    }
+
+    .typed-wrapper {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.93);
+      border: 1px solid rgba(148,163,184,0.7);
+      box-shadow: 0 16px 40px rgba(15,23,42,0.85);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+
+    .typed-text {
+      min-height: 1.3em;
+      white-space: nowrap;
+    }
+
+    .cursor {
+      width: 10px;
+      height: 1.1em;
+      margin-left: 4px;
+      border-radius: 2px;
+      background: var(--accent);
+      animation: blink 0.7s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%,100% { opacity: 0; }
+    }
+
+    /* content that appears after typing */
+    .extra {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .extra.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .subtitle {
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .subtitle strong {
+      color: var(--accent-soft);
+      font-weight: 500;
+    }
+
+    .meta {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+    }
+
+    .meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta span::before {
+      content: "●";
+      font-size: 10px;
+      color: rgba(148,163,184,0.9);
+    }
+
+    .enter-area {
+      margin-top: 30px;
+    }
+
+    .enter-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      color: var(--accent-soft);
+      cursor: pointer;
+      position: relative;
+      padding-bottom: 3px;
+      text-decoration: none;
+    }
+
+    .enter-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-soft), transparent);
+      transform-origin: center;
+      transform: scaleX(0.5);
+      opacity: 0.75;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .enter-link span.icon {
+      font-size: 18px;
+      transform: translateX(0);
+      transition: transform 0.18s ease;
+    }
+
+    .enter-link:hover::after {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+
+    .enter-link:hover span.icon {
+      transform: translateX(3px);
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 480px) {
+      .typed-wrapper {
+        width: 100%;
+        justify-content: center;
+      }
+      .typed-text {
+        font-size: 14px;
+      }
+      .title {
+        letter-spacing: 0.15em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- background blobs -->
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="shell">
+    <div class="card">
+      <div class="card-inner">
+        <div class="pill">
+          <span class="pill-dot"></span>
+          SIGNAL NINJAS · SMART PARKING
+        </div>
+
+        <div class="title">PARKING STATUS CONSOLE</div>
+
+        <div class="typed-wrapper">
+          <span class="typed-text" id="typed-text"></span>
+          <span class="cursor"></span>
+        </div>
+
+        <!-- everything below will fade in after typing finishes -->
+        <div class="extra" id="extra-block">
+          <div class="subtitle">
+            Monitor the real-time occupancy state for <strong>Slot A1</strong>,
+            powered by ESP32, ultrasonic distance sensing and secure MQTT messaging.
+          </div>
+
+          <div class="meta">
+            <span>Group: Signal Ninjas &nbsp;·&nbsp; Haitao Zhang · Bowen Jiang</span>
+            <span>Node: ESP32 · HC-SR04 · Slot A1</span>
+            <span>Broker: test.mosquitto.org (MQTT)</span>
+          </div>
+
+          <div class="enter-area">
+            <a class="enter-link" id="enter-link">
+              <span class="icon">➜</span>
+              <span>Enter dashboard</span>
+            </a>
+            <div class="hint">
+              You will be redirected to the live web dashboard hosted on GitHub Pages.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // typewriter effect for the main line
+    const fullText = "Welcome to the Smart Parking Status System";
+    const typedSpan = document.getElementById("typed-text");
+    const extraBlock = document.getElementById("extra-block");
+    const enterLink = document.getElementById("enter-link");
+
+    let index = 0;
+    const typingDelay = 110;
+    const startDelay = 400;
+
+    function typeNext() {
+      if (index < fullText.length) {
+        typedSpan.textContent += fullText.charAt(index);
+        index++;
+        setTimeout(typeNext, typingDelay);
+      } else {
+        // reveal extra content with a smooth fade-in
+        extraBlock.classList.add("visible");
+      }
+    }
+
+    setTimeout(typeNext, startDelay);
+
+    enterLink.addEventListener("click", () => {
+      window.location.href = "https://OgalinLabM0.github.io/iot-parking-dashboard/";
+    });
+  </script>
+</body>
+</html>
