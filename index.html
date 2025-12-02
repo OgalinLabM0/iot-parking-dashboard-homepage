@@ -8,99 +8,111 @@
 <style>
     :root {
       --bg: #020617; --accent: #38bdf8; --accent-soft: #7dd3fc;
-      --card-bg: rgba(15, 23, 42, 0.85); --card-border: rgba(148, 163, 184, 0.4);
-      --text-main: #e5e7eb; --text-muted: #9ca3af;
+      --card-bg: rgba(15, 23, 42, 0.6); --card-border: rgba(148, 163, 184, 0.2);
+      --text-main: #e5e7eb; --text-muted: #94a3b8;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
     
     body {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      padding: 16px; font-family: system-ui, sans-serif; color: var(--text-main);
-      background: #020617; overflow: hidden;
-      background: radial-gradient(circle at 50% 50%, #1e293b 0%, #020617 100%);
+      padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main); background: #020617; overflow: hidden;
+      background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
     }
 
-    /* 装饰光球 (手机上减淡) */
+    /* 背景动态光球 */
     .blob {
-      position: fixed; width: 300px; height: 300px; border-radius: 50%;
-      filter: blur(50px); opacity: 0.3; z-index: -1; animation: float 10s infinite alternate;
+      position: fixed; border-radius: 50%; filter: blur(60px); opacity: 0.4; z-index: -1;
+      animation: float 10s infinite alternate ease-in-out;
     }
-    .blob.b1 { background: #1d4ed8; top: -50px; left: -50px; }
-    .blob.b2 { background: #0f766e; bottom: -50px; right: -50px; }
-    @keyframes float { from { transform: translate(0,0); } to { transform: translate(20px, 20px); } }
+    .blob.b1 { width: 300px; height: 300px; background: #1d4ed8; top: -10%; left: -10%; }
+    .blob.b2 { width: 250px; height: 250px; background: #0f766e; bottom: -10%; right: -10%; animation-delay: -2s; }
+    .blob.b3 { width: 200px; height: 200px; background: #7c3aed; top: 40%; left: 40%; opacity: 0.2; animation-delay: -5s; }
+    @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 30px); } }
 
-    .shell { width: 100%; max-width: 600px; }
+    .shell { width: 100%; max-width: 500px; perspective: 1000px; }
 
     .card {
-      position: relative; padding: 30px; border-radius: 24px;
+      position: relative; padding: 40px 30px; border-radius: 30px;
       background: var(--card-bg); border: 1px solid var(--card-border);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5); backdrop-filter: blur(20px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column;
     }
 
+    /* 顶部小标签 */
     .pill {
-      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
-      border-radius: 20px; font-size: 11px; letter-spacing: 0.1em;
-      color: var(--accent-soft); background: rgba(15,23,42,0.8);
-      border: 1px solid rgba(148,163,184,0.5); margin-bottom: 16px; text-transform: uppercase;
+      align-self: flex-start; display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; color: var(--accent); background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2); margin-bottom: 24px;
     }
-    .pill-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
+    .pill-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); }
 
-    .title { font-size: 26px; font-weight: 700; margin-bottom: 12px; letter-spacing: 0.05em; color: #fff; line-height: 1.2; }
+    /* 标题 */
+    .title {
+      font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 16px;
+      background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; letter-spacing: -0.02em;
+    }
 
-    /* 打字机框 */
+    /* 打字机文字 */
     .typed-wrapper {
-      display: inline-flex; align-items: center; padding: 10px 14px;
-      border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-      font-family: monospace; font-size: 14px; color: var(--accent);
-      max-width: 100%;
+      display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 14px;
+      color: var(--accent-soft); line-height: 1.6; min-height: 24px;
     }
-    .typed-text { white-space: pre; overflow: hidden; } /* 保持在一行 */
     .cursor {
-      width: 8px; height: 1.2em; background: var(--accent); margin-left: 4px;
-      animation: blink 0.8s infinite;
+      display: inline-block; width: 2px; height: 1.2em; background: var(--accent);
+      margin-left: 2px; vertical-align: middle; animation: blink 1s step-end infinite;
     }
     @keyframes blink { 50% { opacity: 0; } }
 
-    .extra { opacity: 0; transform: translateY(10px); transition: all 0.8s ease; }
+    /* 隐藏内容 */
+    .extra { opacity: 0; transform: translateY(10px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .extra.visible { opacity: 1; transform: translateY(0); }
 
-    .subtitle { margin-top: 20px; font-size: 14px; line-height: 1.5; color: var(--text-muted); }
-    .meta { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; color: rgba(255,255,255,0.4); }
+    .subtitle { margin-top: 24px; font-size: 15px; line-height: 1.6; color: var(--text-muted); }
+    .subtitle strong { color: #fff; font-weight: 500; }
 
+    .meta { margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.3); line-height: 1.5; }
+
+    /* 大按钮样式 */
+    .enter-area { margin-top: 32px; }
     .enter-link {
-      display: inline-flex; margin-top: 24px; align-items: center; gap: 8px;
-      font-size: 16px; color: var(--accent-soft); text-decoration: none; cursor: pointer;
-      border-bottom: 1px solid transparent; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; width: 100%;
+      padding: 16px; border-radius: 16px; text-decoration: none;
+      background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(56,189,248,0.1));
+      border: 1px solid rgba(56,189,248,0.3); color: #fff; font-weight: 600;
+      font-size: 16px; cursor: pointer; transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(56,189,248,0.15);
     }
-    .enter-link:hover { border-bottom-color: var(--accent-soft); gap: 12px; }
+    .enter-link:active { transform: scale(0.98); }
+    .enter-link span.icon { margin-right: 8px; transition: transform 0.3s; }
+    .enter-link:hover span.icon { transform: translateX(4px); }
+    .hint { margin-top: 12px; font-size: 11px; color: rgba(255,255,255,0.2); text-align: center; }
 
-    /* =========================================
-       📱 手机端强力优化 (Mobile Only)
-       ========================================= */
+    /* ========== 📱 手机端专属优化 ========== */
     @media (max-width: 600px) {
-      body { padding: 12px; }
-      .card { padding: 20px 16px; }
-
-      .pill { font-size: 10px; margin-bottom: 10px; }
+      body { padding: 0; align-items: flex-end; } /* 靠下排列，更像 Sheet */
+      .shell { width: 100%; }
       
-      .title { font-size: 20px; margin-bottom: 8px; } /* 标题缩小 */
-      
-      /* 强制打字机字体缩小，确保不换行 */
-      .typed-wrapper {
-        font-size: 11px; /* 足够小以放下长句 */
-        padding: 8px 10px;
-        width: 100%;
+      .card {
+        border-radius: 30px 30px 0 0; /* 只有上面圆角 */
+        border: none; border-top: 1px solid rgba(255,255,255,0.1);
+        padding: 40px 24px 60px 24px; /* 底部留白给 iPhone横条 */
+        min-height: 70vh; /* 占据大半个屏幕 */
+        align-items: center; text-align: center; /* 全部居中 */
       }
-      .typed-text { white-space: normal; line-height: 1.4; } /* 允许换行 */
-      .cursor { display: none; } /* 手机上隐藏光标，避免错位难看 */
 
-      .subtitle { font-size: 12px; margin-top: 16px; }
-
-      /* Meta信息垂直排列，去除装饰 */
-      .meta { flex-direction: column; gap: 4px; align-items: flex-start; }
-      .meta span::before { display: none; }
+      .pill { align-self: center; margin-bottom: 20px; }
+      .title { font-size: 28px; }
+      .typed-wrapper { text-align: center; font-size: 13px; }
+      .subtitle { text-align: center; font-size: 14px; margin-top: 20px; }
       
-      .enter-link { font-size: 15px; margin-top: 20px; }
+      .enter-link { 
+        background: var(--accent); color: #000; /* 手机上用实心高亮按钮 */
+        border: none; box-shadow: 0 10px 30px rgba(56,189,248,0.4);
+      }
     }
   </style>
 </head>
@@ -182,6 +194,7 @@
   </script>
 </body>
 </html>
+
 
 
 
